@@ -14,7 +14,7 @@ FIXED_LIGHTS_OFF_TIME = (23, 0)  # (hour, minute) daily cutoff
 RECEIVER_SOCKET = 2
 
 
-LOG_PATH = Path(__file__).with_name('scheduler.log')
+LOG_PATH = str(Path(__file__).with_name('scheduler.log'))
 
 
 def _configure_logging():
