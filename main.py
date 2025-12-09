@@ -9,7 +9,7 @@ from sun_times import Sun
 
 LATITUDE = 52.01355000660077
 LONGITUDE = -2.5974807343283923
-TURN_ON_OFFSET_MINUTES = -30  # negative=before sunset, positive=after sunset
+TURN_ON_OFFSET_MINUTES = 60  # negative=before sunset, positive=after sunset
 FIXED_LIGHTS_OFF_TIME = (23, 0)  # (hour, minute) daily cutoff
 RECEIVER_SOCKET = 2
 
