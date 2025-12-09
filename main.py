@@ -1,5 +1,6 @@
 """Should be run after midnight and before sunset"""
 import logging
+from pathlib import Path
 from datetime import datetime, time as time_cls, timedelta, timezone
 import time
 
@@ -13,7 +14,7 @@ FIXED_LIGHTS_OFF_TIME = (23, 0)  # (hour, minute) daily cutoff
 RECEIVER_SOCKET = 2
 
 
-LOG_PATH = 'scheduler.log'
+LOG_PATH = Path(__file__).with_name('scheduler.log')
 
 
 def _configure_logging():
