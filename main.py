@@ -87,9 +87,9 @@ def main(argv=None):
 
 def _parse_args(argv=None):
     parser = argparse.ArgumentParser(description='Energenie sunset scheduler')
-    parser.add_argument('--turn-on-offset-minutes', type=int, help='Minutes relative to sunset to switch on (negative = before)')
-    parser.add_argument('--lights-off-time', type=_hhmm, help='Daily cutoff in HH:MM (24h)')
-    parser.add_argument('--receiver-socket', type=_receiver, help='Energenie receiver socket (1-4)')
+    parser.add_argument('--turn-on-offset-minutes', type=int, help='Minutes relative to sunset to switch on (negative = before)', required=True)
+    parser.add_argument('--lights-off-time', type=_hhmm, help='Daily cutoff in HH:MM (24h)', required=True)
+    parser.add_argument('--receiver-socket', type=_receiver, help='Energenie receiver socket (1-4)', required=True)
     return parser.parse_args(argv)
 
 
