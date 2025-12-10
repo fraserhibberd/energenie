@@ -14,14 +14,14 @@ FIXED_LIGHTS_OFF_TIME = (23, 0)  # (hour, minute) daily cutoff
 RECEIVER_SOCKET = 2
 
 
-LOG_PATH = str(Path(__file__).with_name('scheduler.log'))
+LOG_PATH = str(Path(__file__).with_name('outdoor_lights.log'))
 
 
 def _configure_logging():
     logging.basicConfig(
         filename=LOG_PATH,
         level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s'
+        format='%(asctime)s %(levelname)s %(name)s %(message)s',
     )
 
 
@@ -58,27 +58,24 @@ def main():
 
     sunset_time = sun.sunset()
 
-    turn_on_dt = _apply_offset(reference.date(), sunset_time,
-                               TURN_ON_OFFSET_MINUTES, reference.tzinfo)
+    turn_on_dt = _apply_offset(reference.date(), sunset_time, TURN_ON_OFFSET_MINUTES, reference.tzinfo)
     turn_on_time = turn_on_dt.timetz()
-    turn_off_dt = datetime.combine(reference.date(),
-                                   time_cls(*FIXED_LIGHTS_OFF_TIME))
+    turn_off_dt = datetime.combine(reference.date(), time_cls(*FIXED_LIGHTS_OFF_TIME))
     if reference.tzinfo is not None:
         turn_off_dt = turn_off_dt.replace(tzinfo=reference.tzinfo)
     turn_off_time = turn_off_dt.timetz()
 
-    logging.info('Sunset: %s, turn_on: %s, turn_off: %s',
-                 sunset_time, turn_on_time, turn_off_time)
+    logging.info('Sunset: %s, turn_on: %s, turn_off: %s', sunset_time, turn_on_time, turn_off_time)
 
     controller = EnergenieGPIO()
 
     if reference >= turn_off_dt:
-        logging.error('Cron ran at/after cutoff; ensuring socket %d is OFF immediately', RECEIVER_SOCKET)
+        logging.error('Cron ran at/after cutoff; ensuring light is off')
         controller.turn_off(RECEIVER_SOCKET)
         return
 
     if reference >= turn_on_dt:
-        logging.warning('Cron ran after the scheduled turn-on; switching socket %d ON now', RECEIVER_SOCKET)
+        logging.warning('Cron ran after the scheduled turn-on; ensuring light is on')
         controller.turn_on(RECEIVER_SOCKET)
     else:
         logging.info('Waiting until turn-on time...')

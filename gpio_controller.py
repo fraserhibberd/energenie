@@ -1,7 +1,11 @@
 import atexit
+import logging
 import time
 
 import RPi.GPIO as GPIO
+
+
+LOGGER = logging.getLogger(__name__)
 
 class EnergenieGPIO:
     _PIN_K = (11, 15, 16, 13)
@@ -37,9 +41,11 @@ class EnergenieGPIO:
         atexit.register(GPIO.cleanup)
 
     def turn_on(self, receiver):
+        LOGGER.info('Turning receiver %d ON', receiver)
         self._send_code(self._bits_for(receiver, self._ON_CODES))
 
     def turn_off(self, receiver):
+        LOGGER.info('Turning receiver %d OFF', receiver)
         self._send_code(self._bits_for(receiver, self._OFF_CODES))
 
     @staticmethod
@@ -50,10 +56,10 @@ class EnergenieGPIO:
             raise ValueError('Receiver must be an integer 1-4')
 
     def _send_code(self, bits):
+        LOGGER.debug('Sending code: %s', bits)
         for pin, value in zip(self._PIN_K, bits):
             GPIO.output(pin, value)
         time.sleep(self._SETTLE_SECONDS)
         GPIO.output(self._PIN_ENABLE, True)
         time.sleep(self._TRANSMIT_SECONDS)
         GPIO.output(self._PIN_ENABLE, False)
-        
