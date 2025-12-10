@@ -28,7 +28,8 @@ class EnergenieGPIO:
         4: (False, False, True, False),
     }
 
-    def __init__(self):
+    def __init__(self, receiver_socket: int):
+        self._receiver_socket = self._validate_receiver(receiver_socket)
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
         for pin in self._PIN_K:
@@ -40,13 +41,13 @@ class EnergenieGPIO:
         GPIO.output(self._PIN_MODSEL, False)
         atexit.register(GPIO.cleanup)
 
-    def turn_on(self, receiver):
-        LOGGER.info('Turning receiver %d ON', receiver)
-        self._send_code(self._bits_for(receiver, self._ON_CODES))
+    def turn_on(self):
+        LOGGER.info('Turning receiver %d ON', self._receiver_socket)
+        self._send_code(self._bits_for(self._receiver_socket, self._ON_CODES))
 
-    def turn_off(self, receiver):
-        LOGGER.info('Turning receiver %d OFF', receiver)
-        self._send_code(self._bits_for(receiver, self._OFF_CODES))
+    def turn_off(self):
+        LOGGER.info('Turning receiver %d OFF', self._receiver_socket)
+        self._send_code(self._bits_for(self._receiver_socket, self._OFF_CODES))
 
     @staticmethod
     def _bits_for(receiver, mapping):
@@ -54,6 +55,16 @@ class EnergenieGPIO:
             return mapping[int(receiver)]
         except (ValueError, KeyError):
             raise ValueError('Receiver must be an integer 1-4')
+
+    @staticmethod
+    def _validate_receiver(receiver):
+        try:
+            receiver_int = int(receiver)
+        except (TypeError, ValueError):
+            raise ValueError('Receiver must be an integer 1-4')
+        if receiver_int not in (1, 2, 3, 4):
+            raise ValueError('Receiver must be an integer 1-4')
+        return receiver_int
 
     def _send_code(self, bits):
         LOGGER.debug('Sending code: %s', bits)

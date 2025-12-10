@@ -65,25 +65,24 @@ def main(argv=None):
 
     logging.info('Sunset: %s, turn_on: %s, turn_off: %s', sunset_time, turn_on_time, turn_off_time)
 
-    receiver_socket = args.receiver_socket
-    controller = EnergenieGPIO()
+    controller = EnergenieGPIO(args.receiver_socket)
 
     if reference >= turn_off_dt:
         logging.error('Cron ran at/after cutoff; ensuring light is off')
-        controller.turn_off(receiver_socket)
+        controller.turn_off()
         return
 
     if reference >= turn_on_dt:
         logging.warning('Cron ran after the scheduled turn-on; ensuring light is on')
-        controller.turn_on(receiver_socket)
+        controller.turn_on()
     else:
         logging.info('Waiting until turn-on time...')
         sleep_until_datetime(turn_on_dt)
-        controller.turn_on(receiver_socket)
+        controller.turn_on()
 
     logging.info('Waiting until cutoff time...')
     sleep_until_datetime(turn_off_dt)
-    controller.turn_off(args.receiver_socket)
+    controller.turn_off()
 
 
 def _parse_args(argv=None):
