@@ -67,6 +67,11 @@ def main(argv=None):
 
     controller = EnergenieGPIO(args.receiver_socket)
 
+    if turn_on_dt >= turn_off_dt:
+        logging.warning('Turn-on time %s is at/after cutoff %s; ensuring light is off and exiting',turn_on_time, turn_off_time)
+        controller.turn_off()
+        return
+
     if reference >= turn_off_dt:
         logging.error('Cron ran at/after cutoff; ensuring light is off')
         controller.turn_off()
