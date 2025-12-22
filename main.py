@@ -1,25 +1,15 @@
 """Should be run after midnight and before sunset"""
 import argparse
 import logging
-from pathlib import Path
 from datetime import datetime, time as time_cls, timedelta, timezone
 import time
 
 from gpio_controller import EnergenieGPIO
 from sun_times import Sun
+from logging_config import configure_logging
 
 LATITUDE = 52.01355000660077
 LONGITUDE = -2.5974807343283923
-
-LOG_PATH = str(Path(__file__).with_name('outdoor_lights.log'))
-
-
-def _configure_logging():
-    logging.basicConfig(
-        filename=LOG_PATH,
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(name)s %(message)s',
-    )
 
 
 def _local_reference_datetime():
@@ -50,7 +40,7 @@ def sleep_until_datetime(target_dt):
 
 def main(argv=None):
     args = _parse_args(argv)
-    _configure_logging()
+    configure_logging()
     reference = _local_reference_datetime()
     sun = Sun(reference, LATITUDE, LONGITUDE)
 

@@ -3,6 +3,7 @@ import logging
 import paho.mqtt.client as mqtt
 
 from gpio_controller import EnergenieGPIO
+from logging_config import configure_logging
 
 
 LOGGER = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ def on_message(client, userdata, msg):
 
 
 def main():
+    configure_logging()
     gpio_switch = EnergenieGPIO(RECEIVER)
     client = mqtt.Client(userdata={"gpio_switch": gpio_switch})
     client.on_connect = on_connect
