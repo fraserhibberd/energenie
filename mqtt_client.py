@@ -6,7 +6,7 @@ from gpio_controller import EnergenieGPIO
 from logging_config import configure_logging
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('energenie.mqtt_client')
 
 BROKER = "localhost"
 TOPIC = "lights/barn/set"

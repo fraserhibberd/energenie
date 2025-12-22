@@ -5,7 +5,7 @@ import time
 import RPi.GPIO as GPIO
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('energenie.gpio_controller')
 
 class EnergenieGPIO:
     _PIN_K = (11, 15, 16, 13)

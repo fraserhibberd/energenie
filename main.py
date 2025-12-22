@@ -8,6 +8,9 @@ from gpio_controller import EnergenieGPIO
 from sun_times import Sun
 from logging_config import configure_logging
 
+
+LOGGER = logging.getLogger('energenie.main')
+
 LATITUDE = 52.01355000660077
 LONGITUDE = -2.5974807343283923
 
@@ -53,29 +56,29 @@ def main(argv=None):
         turn_off_dt = turn_off_dt.replace(tzinfo=reference.tzinfo)
     turn_off_time = turn_off_dt.timetz()
 
-    logging.info('Sunset: %s, turn_on: %s, turn_off: %s', sunset_time, turn_on_time, turn_off_time)
+    LOGGER.info('Sunset: %s, turn_on: %s, turn_off: %s', sunset_time, turn_on_time, turn_off_time)
 
     controller = EnergenieGPIO(args.receiver_socket)
 
     if turn_on_dt >= turn_off_dt:
-        logging.warning('Turn-on time %s is at/after cutoff %s; ensuring light is off and exiting',turn_on_time, turn_off_time)
+        LOGGER.warning('Turn-on time %s is at/after cutoff %s; ensuring light is off and exiting', turn_on_time, turn_off_time)
         controller.turn_off()
         return
 
     if reference >= turn_off_dt:
-        logging.error('Cron ran at/after cutoff; ensuring light is off')
+        LOGGER.error('Cron ran at/after cutoff; ensuring light is off')
         controller.turn_off()
         return
 
     if reference >= turn_on_dt:
-        logging.warning('Cron ran after the scheduled turn-on; ensuring light is on')
+        LOGGER.warning('Cron ran after the scheduled turn-on; ensuring light is on')
         controller.turn_on()
     else:
-        logging.info('Waiting until turn-on time...')
+        LOGGER.info('Waiting until turn-on time...')
         sleep_until_datetime(turn_on_dt)
         controller.turn_on()
 
-    logging.info('Waiting until cutoff time...')
+    LOGGER.info('Waiting until cutoff time...')
     sleep_until_datetime(turn_off_dt)
     controller.turn_off()
 
