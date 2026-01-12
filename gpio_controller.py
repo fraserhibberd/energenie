@@ -1,4 +1,3 @@
-import atexit
 import logging
 import time
 
@@ -39,7 +38,6 @@ class EnergenieGPIO:
         GPIO.setup(self._PIN_ENABLE, GPIO.OUT)
         GPIO.output(self._PIN_ENABLE, False)
         GPIO.output(self._PIN_MODSEL, False)
-        atexit.register(GPIO.cleanup)
 
     def turn_on(self):
         LOGGER.info('Turning receiver %d ON', self._receiver_socket)
